@@ -87,9 +87,6 @@ export default function TasksPage() {
         e.preventDefault();
         try {
             await createTask(projectId, { title, description, dueDate: dueDate || null, status: "TODO", priority: "MEDIUM", labelIds: selectedLabelIds });
-            // Hızlıca listeyi güncellemek için sayfayı yeniden çekebilir veya state'e ekleyebilirsin.
-            // Basitlik için reload yapıyoruz veya state'e ekliyoruz:
-            window.location.reload();
         } catch (err) { console.error(err); }
     };
     const handleDeleteTask = async (id) => { if(window.confirm("Silinsin mi?")) { try { await deleteTask(id); setTasks(prev => prev.filter(t => t.id !== id)); } catch(e) {} } };

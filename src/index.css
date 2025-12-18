@@ -772,3 +772,65 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     width: 100%;
     margin-bottom: 12px;
 }
+/* --- GÜZEL DROPDOWN (SELECT) --- */
+.custom-select {
+    appearance: none; /* Tarayıcının çirkin okunu gizle */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    background-color: var(--bg-panel); /* Koyu zemin */
+    color: var(--text-main);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 8px 32px 8px 12px; /* Sağ tarafa ok için boşluk bıraktık */
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+
+    /* Özel Ok İşareti (SVG) */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2001/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238FBFDA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+.custom-select:hover {
+    border-color: var(--accent);
+    background-color: rgba(255,255,255,0.05);
+}
+
+.custom-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(44, 100, 133, 0.25);
+}
+
+/* Option'ların arka planı (Tarayıcı izin verdiği ölçüde) */
+.custom-select option {
+    background-color: var(--bg-panel);
+    color: var(--text-main);
+}
+/* --- MODAL EKLE BUTONU --- */
+.btn-modal-submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent), #225370); /* Mavi geçişli */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.btn-modal-submit:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.btn-modal-submit:active {
+    transform: translateY(0);
+}
