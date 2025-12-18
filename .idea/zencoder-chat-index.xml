@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ai.zencoder.plugin.chat.index">
+    <option name="chatMetadata" value="{&quot;36599fc2-963c-4abd-bbae-b6b6e9d3a59d&quot;:{&quot;id&quot;:&quot;36599fc2-963c-4abd-bbae-b6b6e9d3a59d&quot;,&quot;title&quot;:&quot;Summarize Recent Core Changes&quot;,&quot;createdAt&quot;:1765661851606,&quot;updatedAt&quot;:1765661939000,&quot;isNameGenerated&quot;:true,&quot;messageCount&quot;:6,&quot;lastMessagePreview&quot;:&quot;The user wants to:\n1. Redesign styling and UI/UX\n2. Focus on visual/UI improvements\n3. Keep existing...&quot;}}" />
+  </component>
+</project>

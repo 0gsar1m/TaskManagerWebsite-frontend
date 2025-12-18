@@ -1,13 +1,755 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* src/index.css */
+
+:root {
+    --bg-main: #394A56;
+    --bg-panel: #22303F;
+    --border-subtle: #2C6485;
+    --text-main: #E7E8E7;
+    --text-muted: #8FBFDA;
+    --accent: #2C6485;
+    --accent-hover: #36759b;
+    --input-bg: #1d252f;
+    --input-border: #323e4d;
+    --danger: #ff6b6b;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif; /* Varsa Inter, yoksa system */
+    background: radial-gradient(circle at top, #4A5D6E 0, #394A56 55%, #232d36 100%);
+    color: var(--text-main);
+    line-height: 1.5;
+}
+
+/* Layout Utilities */
+.app-shell { min-height: 100vh; padding: 40px 24px; display: flex; justify-content: center; }
+.projects-container, .tasks-card { width: 100%; max-width: 1200px; }
+
+/* Header Area */
+.projects-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; padding-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.projects-title, .page-title { margin: 0 0 8px; font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+.projects-subtitle, .page-subtitle { margin: 0; color: var(--text-muted); font-size: 15px; }
+.back-link { display: inline-block; margin-bottom: 8px; color: var(--text-muted); text-decoration: none; font-size: 14px; transition: color 0.2s; }
+.back-link:hover { color: var(--text-main); }
+.title-row { display: flex; align-items: center; gap: 12px; }
+.project-pill { background: rgba(44, 100, 133, 0.2); color: var(--text-muted); padding: 4px 12px; border-radius: 99px; font-size: 13px; border: 1px solid rgba(44, 100, 133, 0.4); }
+
+/* User Info */
+.projects-user { display: flex; align-items: center; gap: 12px; }
+.projects-user-chip { padding: 6px 14px; border-radius: 99px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); font-size: 14px; font-weight: 500; }
+
+/* Main Grid Layout */
+.projects-layout {
+    display: grid;
+    grid-template-columns: 350px 1fr; /* Sidebar biraz daha genişledi */
+    gap: 40px; /* Boşluk artırıldı */
+    align-items: start;
+}
+
+/* Sidebar Styles */
+.projects-sidebar { position: sticky; top: 24px; display: flex; flex-direction: column; gap: 24px; }
+.sidebar-card {
+    background: var(--bg-panel);
+    border-radius: 20px;
+    padding: 28px; /* İç boşluk ferahlatıldı */
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+.sidebar-title { margin: 0 0 20px; font-size: 18px; font-weight: 600; color: var(--text-main); border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 12px; }
+
+/* Form Styles */
+.sidebar-form { display: flex; flex-direction: column; gap: 20px; } /* Inputlar arası boşluk arttı */
+.form-group { display: flex; flex-direction: column; gap: 8px; }
+.form-label { font-size: 13px; font-weight: 500; color: var(--text-muted); margin-left: 2px; }
+.form-input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 10px;
+    padding: 12px 14px; /* Input içi padding arttı */
+    color: var(--text-main);
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+}
+.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(44, 100, 133, 0.2); }
+.form-textarea { min-height: 100px; resize: vertical; font-family: inherit; }
+.form-textarea-sm { min-height: 70px; }
+
+/* Buttons */
+.btn-primary { padding: 14px; font-size: 15px; }
+.btn-primary-sm { padding: 8px 16px; font-size: 13px; }
+.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.full-width { width: 100%; }
+.mt-2 { margin-top: 8px; }
+
+.btn-ghost, .btn-ghost-sm { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.btn-ghost { padding: 8px 16px; }
+.btn-ghost-sm { padding: 6px 12px; font-size: 12px; }
+.btn-ghost:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+
+.btn-icon, .btn-icon-add { background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.btn-icon:hover { background: rgba(255,255,255,0.1); color: white; }
+.btn-icon.delete:hover { background: rgba(255, 107, 107, 0.2); color: var(--danger); }
+
+/* --- Label Selection (Pills) --- */
+.label-selector-container { display: flex; flex-wrap: wrap; gap: 8px; }
+.label-pill-option {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-main);
+    transition: all 0.2s;
+    user-select: none;
+    background: rgba(0,0,0,0.2);
+}
+.label-pill-option:hover { background: rgba(255,255,255,0.08); }
+.label-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* --- Label Management (Estetik Form) --- */
+.label-management-form { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; }
+.label-name-input { flex: 1; padding: 10px 12px; }
+.color-picker-input {
+    width: 42px; height: 42px; padding: 4px;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    border-radius: 10px;
+    cursor: pointer;
+}
+.btn-icon-add { width: 42px; height: 42px; background: var(--accent); color: white; font-size: 20px; border-radius: 10px; }
+.btn-icon-add:hover { background: var(--accent-hover); }
+.existing-labels-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* --- Content / List Area --- */
+.section-title { font-size: 18px; color: var(--text-muted); margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+
+/* Project Grid */
+.grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.item-card {
+    background: rgba(34, 48, 63, 0.4);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex; flex-direction: column;
+    transition: all 0.2s;
+}
+.item-card:hover { transform: translateY(-4px); background: var(--bg-panel); border-color: rgba(143, 191, 218, 0.2); }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.card-link { font-size: 18px; font-weight: 700; color: var(--text-main); text-decoration: none; }
+.card-link:hover { color: var(--accent-hover); text-decoration: underline; }
+.card-description { font-size: 14px; color: var(--text-muted); margin: 0 0 20px; line-height: 1.5; flex: 1; }
+.card-actions { display: flex; gap: 4px; }
+.card-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.05); }
+
+/* Task List Items */
+.task-list-container { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 16px; }
+.task-card-item {
+    background: rgba(34, 48, 63, 0.4);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.2s;
+}
+.task-card-item:hover { background: var(--bg-panel); border-color: rgba(143, 191, 218, 0.15); }
+.task-header-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.task-item-title { font-size: 16px; font-weight: 600; color: var(--text-main); }
+.task-item-date { font-size: 12px; background: rgba(255,255,255,0.05); padding: 4px 8px; border-radius: 6px; color: var(--text-muted); }
+.task-item-desc { font-size: 14px; color: var(--text-muted); margin: 0 0 16px; }
+
+.task-controls-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 16px; }
+.control-group { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
+.mini-select {
+    background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-main); padding: 4px 8px; border-radius: 6px; font-size: 13px; outline: none; cursor: pointer;
+}
+/* --- GÜNCELLENMİŞ "SİL" BUTONU --- */
+/* Eski .btn-delete-text yerine bunu kullanacağız */
+
+.btn-delete-action {
+    background: rgba(255, 107, 107, 0.1); /* Hafif kırmızı zemin */
+    border: 1px solid var(--danger);       /* Kırmızı çerçeve */
+    color: var(--danger);                  /* Kırmızı yazı */
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 14px;                     /* Tıklama alanını genişlettik */
+    border-radius: 8px;                    /* Köşeleri yumuşattık */
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;                     /* Sağa yaslamak için */
+}
+
+/* Mouse üzerine gelince parlasın */
+.btn-delete-action:hover {
+    background: var(--danger);             /* Zemini tamamen kırmızı yap */
+    color: white;                          /* Yazıyı beyaz yap */
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3); /* Kırmızı gölge ekle */
+    transform: translateY(-1px);           /* Hafifçe yukarı zıplasın */
+}
+
+.btn-delete-action:active {
+    transform: translateY(0);
+}
+.task-footer-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+.chips-wrapper { display: flex; gap: 4px; flex-wrap: wrap; }
+.label-chip { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+/* --- GÜNCELLENMİŞ "ETİKETLE" BUTONU --- */
+/* Eski .btn-link-action yerine bunu kullanacağız */
+
+.btn-link-action {
+    background: rgba(44, 100, 133, 0.15); /* Hafif transparan mavi zemin */
+    border: 1px solid var(--accent);       /* B'dazzled Blue çerçeve */
+    color: var(--text-muted);              /* Okunabilir açık mavi/gri yazı */
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px 14px;                     /* Tıklama alanını genişlettik */
+    border-radius: 8px;                    /* Köşeleri yumuşattık */
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;                 /* Alt çizgiyi kaldırdık */
+}
+
+/* Mouse üzerine gelince parlasın */
+.btn-link-action:hover {
+    background: var(--accent);             /* Zemini tamamen mavi yap */
+    color: white;                          /* Yazıyı beyaz yap */
+    box-shadow: 0 4px 12px rgba(44, 100, 133, 0.3); /* Hafif gölge ekle */
+    transform: translateY(-1px);           /* Hafifçe yukarı zıplasın */
+}
+
+.btn-link-action:active {
+    transform: translateY(0);
+}
+
+/* Inline Editor */
+.inline-label-editor { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px; }
+.editor-pill { display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 12px; border: 1px solid transparent; cursor: pointer; font-size: 12px; background: rgba(255,255,255,0.05); transition: all 0.2s; }
+.editor-pill.active { background: rgba(255,255,255,0.1); }
+.editor-pill:hover { background: rgba(255,255,255,0.15); }
+.dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* Responsive */
+@media (max-width: 960px) {
+    .projects-layout { grid-template-columns: 1fr; }
+    .projects-sidebar { position: static; }
+}
+/* src/index.css dosyasının EN ALTINA ekle */
+
+/* -------- LOGIN PAGE STYLES -------- */
+
+.login-layout {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.login-panel {
+    width: 100%;
+    max-width: 480px;
+    background: radial-gradient(circle at top, #2f3e50 0, #22303F 55%, #151d26 100%);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow:
+            0 24px 60px rgba(0, 0, 0, 0.5),
+            0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.login-title {
+    margin: 0 0 8px;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.login-subtitle {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.login-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.login-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.login-input {
+    border-radius: 8px;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--text-main);
+    padding: 10px 12px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.login-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(44, 100, 133, 0.25);
+}
+
+.login-error {
+    margin: 0;
+    font-size: 13px;
+    color: var(--danger);
+    text-align: center;
+}
+
+.login-submit-btn {
+    margin-top: 8px;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    background: linear-gradient(135deg, #2C6485, #225370);
+    transition: filter 0.2s;
+}
+
+.login-submit-btn:hover {
+    filter: brightness(1.1);
+}
+
+.login-submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.login-footer {
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.login-footer code {
+    background: #151d26;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+/* --- YENİ HEADER & MOTIVASYON KARTI STİLLERİ --- */
+
+/* Header Wrapper: Başlık ve Motivasyon kartını yan yana alır */
+.projects-header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; /* Alt hizalama */
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    gap: 24px; /* Mobilde veya dar ekranda aralık */
+}
+
+.header-left {
+    flex: 1; /* Sol taraf alanı doldursun */
+}
+
+/* User Info Row: İsim ve Çıkış butonu yan yana */
+.user-info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+/* Motivasyon Kartı */
+.motivation-card {
+    flex: 0 0 320px; /* Genişlik sabit: 320px */
+    background: rgba(34, 48, 63, 0.6); /* Hafif şeffaf koyu zemin */
+    border: 1px solid rgba(143, 191, 218, 0.15); /* Dark Sky Blue çerçeve */
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 90px;
+    transition: all 0.2s ease;
+}
+
+.motivation-card:hover {
+    background: rgba(34, 48, 63, 0.9);
+    border-color: rgba(143, 191, 218, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.motivation-content {
+    padding-right: 24px; /* Yenile butonu için boşluk */
+}
+
+.quote-text {
+    font-size: 13px;
+    color: var(--text-main);
+    font-style: italic;
+    line-height: 1.4;
+    margin: 0 0 6px 0;
+}
+
+.quote-author {
+    font-size: 12px;
+    color: var(--text-muted); /* Dark Sky Blue */
+    display: block;
+    text-align: right;
+    font-weight: 500;
+}
+
+/* Yenile Butonu (Sağ üst köşe) */
+.btn-icon-refresh {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.2s;
+    line-height: 1;
+}
+
+.btn-icon-refresh:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(45deg); /* Hoş bir dönüş efekti */
+}
+
+.btn-icon-refresh:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Responsive: Mobilde motivasyon kartını alta al veya gizle */
+@media (max-width: 768px) {
+    .projects-header-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .motivation-card {
+        width: 100%; /* Tam genişlik */
+        flex: none;
+        margin-top: 16px;
+    }
+}/* src/index.css -- MEVCUT KODLARININ EN ALTINA EKLE */
+
+/* --- YENİ FULL WIDTH STICKY HEADER --- */
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.full-sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* En üstte kalsın */
+    width: 100%;
+    background: rgba(57, 74, 86, 0.98); /* Koyu, hafif şeffaf arka plan */
+    backdrop-filter: blur(12px); /* Buzlu cam efekti */
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+    padding: 24px 0; /* Dikey dolgu */
+}
+
+/* Header içeriğini ortalamak için kapsayıcı */
+.header-content-centered {
+    width: 100%;
+    max-width: 1200px; /* Ana içerikle aynı genişlik */
+    margin: 0 auto;
+    padding: 0 24px; /* Kenar boşlukları */
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+/* app-shell'in üst dolgusunu header olduğu için azaltıyoruz */
+.app-shell {
+    padding-top: 32px;
+}
+
+/* Sidebar'ın header'ın altına yapışması için */
+.sticky-sidebar {
+    position: sticky;
+    /* Header yüksekliği (tahmini 130px) + biraz boşluk */
+    top: 150px;
+    align-self: start;
+    height: fit-content;
+}
+
+
+/* --- GÖREV DÜZENLEME (EDIT MODE) İYİLEŞTİRMELERİ --- */
+
+.task-edit-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap; /* Dar alanlarda taşmayı önle */
+}
+
+.edit-title-input {
+    flex: 1; /* Mümkün olduğunca yer kapla */
+    min-width: 200px;
+    font-weight: 600;
+}
+
+/* Yeni Zarif Kaydet/İptal Butonları */
+.edit-actions-row {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-icon-action:hover {
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-1px);
+}
+
+.btn-icon-action.save {
+    color: #4ade80; /* Canlı yeşil */
+    background: rgba(74, 222, 128, 0.1);
+}
+.btn-icon-action.save:hover {
+    background: rgba(74, 222, 128, 0.2);
+    border-color: rgba(74, 222, 128, 0.3);
+}
+
+.btn-icon-action.cancel {
+    color: var(--danger); /* Kırmızı */
+    background: rgba(255, 107, 107, 0.1);
+}
+.btn-icon-action.cancel:hover {
+    background: rgba(255, 107, 107, 0.2);
+    border-color: rgba(255, 107, 107, 0.3);
+}
+
+/* --- BADGE GÖRÜNÜMLÜ TARİH INPUTU --- */
+/* Okuma modundaki .task-item-date ile aynı görünümü taklit eder */
+.date-edit-badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    background: rgba(255,255,255,0.08); /* Biraz daha belirgin */
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: var(--text-main);
+    cursor: pointer;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.2s;
+    white-space: nowrap;
+    height: 36px; /* Inputlarla aynı yükseklik */
+}
+
+.date-edit-badge:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: var(--accent);
+}
+
+/* Gerçek tarih inputunu gizle ama tıklanabilir yap */
+.hidden-date-trigger {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Mobilde başlık ve butonların düzgün durması için */
+@media (max-width: 600px) {
+    .task-edit-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .edit-actions-row {
+        justify-content: flex-end;
+        margin-top: 8px;
+    }
+    .date-edit-badge {
+        justify-content: center;
+    }
+}/* --- TARİH SEÇİCİ (DATE PICKER) ÖZELLEŞTİRMELERİ --- */
+
+/* Tüm tarih inputları için genel ayar: İkonu Beyaz Yap */
+input[type="date"] {
+    color-scheme: dark; /* Tarayıcı takvimini koyu tema yapar */
+    position: relative;
+}
+
+/* O siyah takvim ikonunu beyaza çevirir ve tıklanabilir yapar */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Siyahı beyaza çevir */
+    opacity: 0.6;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+/* --- EDIT MODU TARİH KUTUSU (Görsel 2'deki gibi duracak) --- */
+.date-edit-input {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    /* İkon ve metin hizalaması */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    min-width: 130px;
+}
+
+.date-edit-input:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--accent);
+}
+
+.date-edit-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(44, 100, 133, 0.25);
+}
+
+/* Edit Modu Buton Grubu (Tik ve Çarpı) */
+.edit-actions-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+/* Tik ve Çarpı Butonları - Daha şık */
+.btn-icon-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: rgba(255,255,255,0.05);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-icon-action svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Kaydet (Tik) - Yeşil */
+.btn-icon-action.save {
+    color: #4ade80;
+    background: rgba(74, 222, 128, 0.1);
+    border-color: rgba(74, 222, 128, 0.2);
+}
+.btn-icon-action.save:hover {
+    background: rgba(74, 222, 128, 0.2);
+    transform: translateY(-1px);
+}
+
+/* İptal (Çarpı) - Kırmızı */
+.btn-icon-action.cancel {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+    border-color: rgba(248, 113, 113, 0.2);
+}
+.btn-icon-action.cancel:hover {
+    background: rgba(248, 113, 113, 0.2);
+    transform: translateY(-1px);
+}/* --- CUSTOM SCROLLBAR (Koyu Temaya Uygun) --- */
+
+/* Scrollbar genişliği */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+/* Arka plan (Yol) */
+::-webkit-scrollbar-track {
+    background: #1d252f; /* Çok koyu charcoal */
+    border-radius: 5px;
+}
+
+/* Çubuk (Tutacak) */
+::-webkit-scrollbar-thumb {
+    background: #394A56; /* Charcoal */
+    border-radius: 5px;
+    border: 2px solid #1d252f; /* Kenarlardan biraz boşluk bırakır */
+}
+
+/* Üzerine gelince çubuk rengi */
+::-webkit-scrollbar-thumb:hover {
+    background: #2C6485; /* B'dazzled Blue (Accent rengin) */
+}/* --- SKELETON LOADING ANIMASYONU --- */
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.skeleton {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(to right, #22303F 4%, #2c3e50 25%, #22303F 36%);
+    background-size: 1000px 100%;
+    border-radius: 8px;
+    height: 60px; /* Varsayılan yükseklik */
+    width: 100%;
+    margin-bottom: 12px;
 }
