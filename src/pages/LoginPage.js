@@ -33,8 +33,6 @@ function LoginPage() {
     return (
         <div className="login-layout">
             <div className="login-panel">
-                {/* LOGO BADGE KALDIRILDI */}
-
                 <div className="login-header">
                     <h1 className="login-title">MyTasks - Giriş</h1>
                     <p className="login-subtitle">
@@ -71,21 +69,33 @@ function LoginPage() {
 
                     {error && <p className="login-error">{error}</p>}
 
-                    <button
-                        type="submit"
-                        className="login-submit-btn"
-                        disabled={submitting}
-                    >
-                        {submitting ? "Giriş yapılıyor..." : "Giriş yap"}
-                    </button>
+                    {/* --- BUTON GRUBU --- */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "8px" }}>
+                        <button
+                            type="submit"
+                            className="login-submit-btn"
+                            disabled={submitting}
+                        >
+                            {submitting ? "Giriş yapılıyor..." : "Giriş yap"}
+                        </button>
+
+                        <button
+                            type="button" /* Formu submit etmemesi için type button önemli */
+                            className="login-register-btn"
+                            onClick={() => navigate("/register")}
+                        >
+                            Hesap Oluştur
+                        </button>
+                    </div>
+
                 </form>
 
                 <div className="login-footer">
                     <span>© 2025 MyTasks</span>
                     <span className="login-footer-sep">·</span>
                     <span>
-            Test kullanıcısı: <code>emir2 / secret123</code>
-          </span>
+                        Test kullanıcısı: <code>emir2 / secret123</code>
+                    </span>
                 </div>
             </div>
         </div>
