@@ -12,7 +12,7 @@ function LoginPage() {
     const [password, setPassword] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
-
+    const ADMIN_PANEL_URL = "https://taskmanagerwebsite-backend.onrender.com";
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -80,21 +80,35 @@ function LoginPage() {
                         </button>
 
                         <button
-                            type="button" /* Formu submit etmemesi için type button önemli */
+                            type="button"
                             className="login-register-btn"
                             onClick={() => navigate("/register")}
                         >
                             Hesap Oluştur
                         </button>
-                    </div>
 
+                        {/* --- YENİ EKLENEN ADMIN BUTONU --- */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px", margin: "10px 0" }}>
+                            <div style={{ flex: 1, height: "1px", background: "#334155" }}></div>
+                            <span style={{ color: "#64748b", fontSize: "12px" }}>VEYA</span>
+                            <div style={{ flex: 1, height: "1px", background: "#334155" }}></div>
+                        </div>
+
+                        <a
+                            href={ADMIN_PANEL_URL}
+                            className="login-admin-btn"
+                        >
+                            Admin Paneli
+                        </a>
+
+                    </div>
                 </form>
 
                 <div className="login-footer">
                     <span>© 2025 MyTasks</span>
                     <span className="login-footer-sep">·</span>
                     <span>
-                        Test kullanıcısı: <code>emir2 / secret123</code>
+                        Test kullanıcısı: <code>ogsarim / 123456</code>
                     </span>
                 </div>
             </div>
